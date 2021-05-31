@@ -10,9 +10,9 @@
         <h1>Brevets API</h1></br></br>
         <div class="type">
             <label>Display Style: </label>
-            <select nameid="dtype" default="JSON">
-                <option value="CSV">CSV</option>
+            <select id="dtype" default="JSON">
                 <option value="JSON">JSON</option>
+                <option value="CSV">CSV</option>
             </select>
         </div></br></br>
         <div class="topvalue">
@@ -39,19 +39,19 @@
             $("#listAll").click(
             function(e)
             {
-               $.get("/listAll", {top: $(".topvalue").find("input[name='top']").val(), dtype: $(".type").val()}); 
+               $.get("/listAll", {top: $(".topvalue").find("input[name='top']").val(), dtype: $("#type").text()}); 
             });
 
             $("#listOpenOnly").click(
             function(e)
             {
-               $.get("/listOpenOnly", {top: $(".topvalue").find("input[name='top']").val(), dtype: $(".type").val()}); 
+               $.get("/listOpenOnly", {top: $(".topvalue").find("input[name='top']").val(), dtype: $("#type").text()}); 
             });
 
             $("#listCloseOnly").click(
             function(e)
             {
-               $.get("/listCloseOnly", {top: $(".topvalue").find("input[name='top']").val(), dtype: $(".type").val()}); 
+               $.get("/listCloseOnly", {top: $(".topvalue").find("input[name='top']").val(), dtype: $("#type").text()}); 
             });
         </script>
     </body>

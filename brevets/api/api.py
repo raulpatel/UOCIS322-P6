@@ -1,5 +1,6 @@
 import os
-from flask import Flask, request
+import logging
+from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from pymongo import MongoClient
 app = Flask(__name__)
@@ -10,27 +11,33 @@ db = client.tododb
 
 def csv_form(lst, top):
     upper = list(lst[0].keys())  # make sure we have a list of the keys
-    length = len(upper)
-    upper = ", ".join(upper)  # convert to string
-    upper += "\n"
+    lst_len = len(lst)
+    row_len = len(upper)
+    upper = ",".join(upper)
+    upper += "<br>"
     vals = ""
-    if top != -1:
+    if top != -1 and top < lst_len:
         length = top  # set the new length if one is specified
-    for i in range(length):
-        row = ", ".join(list(lst[i].values()))
-        row += "\n"
+    for i in range(lst_len):
+        rows = list(lst[i].values())
+        for i in range(row_len):
+            rows[i] = str(rows[i])
+        row = ",".join(rows)
+        row += "<br>"
         vals += row
     return upper + vals
         
 
 def json_form(lst, top):
     if top == -1:
-        return flask.jsonify(lst)
+        return jsonify(lst)
     else:
+        if top > len(lst):
+            top = len(lst)
         result = []
         for i in range(top):
             result.append(lst[i])
-        return flask.jsonify(result)
+        return jsonify(result)
 
 class listAll(Resource):
     def get(self, dtype):
@@ -61,6 +68,8 @@ class listCloseOnly(Resource):
 api.add_resource(listAll, '/listAll', '/listAll/<string:dtype>')
 api.add_resource(listOpenOnly, '/listOpenOnly', '/listOpenOnly/<string:dtype>')
 api.add_resource(listCloseOnly, '/listCloseOnly', '/listCloseOnly/<string:dtype>')
+
+app.logger.setLevel(logging.DEBUG)
 
 # Run the application
 if __name__ == '__main__':

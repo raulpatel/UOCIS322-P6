@@ -1,5 +1,6 @@
 <html>
     <head>
+        <meta charset="UTF-8">
         <title>Brevets API</title>
         <script
          src="https://code.jquery.com/jquery-3.5.1.min.js"
@@ -16,7 +17,7 @@
             </select>
         </div></br></br>
         <div class="topvalue">
-            <input name="top" style="width: 20em;" type="number" min="1" max="20" step="1" placeholder="Specify how many entries to view" default="0"/>
+            <input name="top" style="width: 20em;" type="number" min="1" max="20" step="1" placeholder="Specify how many entries to view" default="-1"/>
         </div></br></br>
         <div class="buttons">
             <div class="listAll">
@@ -30,28 +31,48 @@
             </div>
         </div></br></br>
         <div class="result">
-            <code id="result">
-                {{ result }}
-            </code>
+            <pre><code id="result">{{ result }}</code></pre>
         </div>
         <script type="text/javascript">
-            
-            $("#listAll").click(
-            function(e)
-            {
-               $.get("/listAll", {top: $(".topvalue").find("input[name='top']").val(), dtype: $("#type").text()}); 
-            });
+            $(document).ready(function() { 
+                $("#listAll").click(
+                function(e)
+                {
+                    e.preventDefault();
+                    $.get("/listAll", {top: $(".topvalue").find("input[name='top']").val(), dtype: $("#dtype").val()}).done(
+                        function(data)
+                        {
+                            $("#result").html(data);
+                            //console.log(data);
+                        }
+                        ); 
+                });
 
-            $("#listOpenOnly").click(
-            function(e)
-            {
-               $.get("/listOpenOnly", {top: $(".topvalue").find("input[name='top']").val(), dtype: $("#type").text()}); 
-            });
+                $("#listOpenOnly").click(
+                function(e)
+                {
+                    e.preventDefault();
+                    $.get("/listOpenOnly", {top: $(".topvalue").find("input[name='top']").val(), dtype: $("#dtype").val()}).done(
+                        function(data)
+                        {
+                            $("#result").html(data);
+                            //console.log(data);
+                        }
+                        ); 
+                });
 
-            $("#listCloseOnly").click(
-            function(e)
-            {
-               $.get("/listCloseOnly", {top: $(".topvalue").find("input[name='top']").val(), dtype: $("#type").text()}); 
+                $("#listCloseOnly").click(
+                function(e)
+                {
+                    e.preventDefault();
+                    $.get("/listCloseOnly", {top: $(".topvalue").find("input[name='top']").val(), dtype: $("#dtype").val()}).done(
+                        function(data)
+                        {
+                            $("#result").html(data);
+                            //console.log(data);
+                        }
+                        ); 
+                });
             });
         </script>
     </body>

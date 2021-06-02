@@ -38,6 +38,12 @@ def page_not_found(error):
 
 @app.route('/clear/', methods=['GET'])
 def clear():
+    dbase = db.tododb.find()
+    if dbase:
+        dbase = list(dbase)
+        # app.logger.debug("DB before submission: ")
+        for item in dbase:
+            # app.logger.debug("\t" + str(dict(item)))
     db.tododb.delete_many({})
     return redirect(url_for('index'))
 
@@ -60,6 +66,7 @@ def submit():
         'close': close_time
     }
     if request.form['km'] != "":
+        #app.logger.debug("Submitting row into db with:\n\tIndex: " + str(index) + ", Controle dist: " + str(km) + ", Brevet dist: " + str(brev_dist) + ", Open time: " + open_time + ", and Close time: " + close_time)
         db.tododb.insert_one(item_doc)
 
     return redirect(url_for('index'))
@@ -71,13 +78,15 @@ def display():
     """for i in range(len(rows)):
         rows[i] = flask.jsonify(result=rows[i])"""
     ind = request.args.get('ind', type=int)
+    #app.logger.debug("Checking db for index: " + str(ind))
     row = db.tododb.find_one({'index': ind})
     if row:
         row = dict(row)
         row['_id'] = str(row['_id'])
-        app.logger.debug(row)
+        #app.logger.debug(row)
         return flask.jsonify(result=row) # render_template('calc.html', items=list(db.tododb.find()))
     else:
+        #app.logger.debug("Cannot find index: " + str(ind) + " in the db")
         return ""
 
 ###############
@@ -123,4 +132,4 @@ app.logger.setLevel(logging.DEBUG)
 
 if __name__ == "__main__":
     #print("Opening for global access on port {}".format(CONFIG.PORT))
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", debug=True)
